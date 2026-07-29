@@ -2,7 +2,6 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
-import sklearn
 from sklearn.preprocessing import RobustScaler
 
 
@@ -42,8 +41,8 @@ class DataProcessing:
                 print(f"Столбец {col_name}: {mask.sum()}")
 
     def __corrupted_data(self):
-        '''удаляет сэмплы с более чем 3-мя пропусками'''
-        self.df = self.df[~(self.df.isnull().sum(axis=1) >= 3)]
+        '''удаляет сэмплы с 3-мя и более пропусками'''
+        self.df = self.df[self.df.isnull().sum(axis=1) < 3]
 
     def __onehot_and_median(self):
         '''OneHot + mediana'''
@@ -81,9 +80,11 @@ class DataProcessing:
 
     def __scaler(self):
         if self.data_type == "train":
-            self.df[DataProcessing.__columns_to_scal] = self.scaler.fit_transform(self.df[DataProcessing.__columns_to_scal])
+            scaled_values = self.scaler.fit_transform(self.df[DataProcessing.__columns_to_scal])
+            self.df[DataProcessing.__columns_to_scal] = scaled_values
         else:
-            self.df[DataProcessing.__columns_to_scal] = self.scaler.transform(self.df[DataProcessing.__columns_to_scal])
+            scaled_values = self.scaler.transform(self.df[DataProcessing.__columns_to_scal])
+            self.df[DataProcessing.__columns_to_scal] = scaled_values
 
     def df_prepr(self):
         self.__check_valid_of_data()
