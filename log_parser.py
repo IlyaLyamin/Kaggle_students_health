@@ -12,9 +12,20 @@ def param_parser_by_num(file_name:str, nums:list):
             elif READ:
                 if line.split()[3] == "batch":
                     param = "batch_size"
-                    val = line.split()[5]
+                    val = int(line.split()[5])
+                elif line.split()[3] in ["learning_rate:", "loss:", "penalty:"]:
+                    param = line.split()[3][:-1]
+                    val = line.split()[4]
+                elif line.split()[3] == "shuffle:":
+                    param = line.split()[3][:-1]
+                    if line.split()[4] == "True":
+                        val = True
+                    else: val = False
+                elif line.split()[3] == "random_state:":
+                    param = line.split()[3][:-1]
+                    val = int(line.split()[4])
                 else:
-                    param, val = line.split()[3:5]
+                    param, val = line.split()[3][:-1], float(line.split()[4])
 
                 if model_num not in params.keys():
                     params[model_num] = dict()
