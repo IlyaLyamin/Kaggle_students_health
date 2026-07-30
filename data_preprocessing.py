@@ -23,6 +23,10 @@ class DataProcessing:
         self.scaler = RobustScaler()
         self.df = df
 
+    @classmethod
+    def get_translate_dict(cls):
+        return cls.__translate_dict
+
     def __check_valid_of_data(self):
         '''проверяет, что бы заполненные данные лежали в нормальных интервалах'''
         for col_name in self.df.columns:
@@ -87,8 +91,9 @@ class DataProcessing:
             self.df[DataProcessing.__columns_to_scal] = scaled_values
 
     def df_prepr(self):
-        self.__check_valid_of_data()
-        self.__corrupted_data()
+        if self.data_type == "train":
+            self.__check_valid_of_data()
+            self.__corrupted_data()
         self.__onehot_and_median()
         self.__scaler()
         return self.df.copy()
