@@ -1,6 +1,5 @@
 datasets
 .ipynb_checkpoints
-AGENTS.md
 catboost_info
 __pycache__
 predictions.csv
