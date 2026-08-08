@@ -3,7 +3,7 @@ import heapq
 
 def param_parser_by_num(file_name:str, nums:list):
     model_num = 0
-    params = {} # {номер модели: словарь с параметрами}
+    params = {} # {model number: dict of parameters}
     with open(file_name, "r", encoding="utf-8") as f:
         READ = False
         for line in f:
@@ -40,8 +40,8 @@ def param_parser_by_num(file_name:str, nums:list):
 
 
 def find_best_models(file_name: str, num:int):
-    # num --- кол-во моделей
-    best_models = {}    # {номер: val}
+    # num --- number of models
+    best_models = {}    # {number: value}
     with open(file_name, "r", encoding="utf-8") as f:
         model_num = 0
         for line in f:

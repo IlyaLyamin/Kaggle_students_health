@@ -1,4 +1,4 @@
-# TODO: настроить логирование в один файл
+# TODO: set up logging into a single file
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
@@ -13,7 +13,7 @@ class DataProcessing:
         "sleep_quality": ('average', 'poor', 'good'), "physical_activity_level": ('sedentary', 'moderate', 'active'),
         "smoking_alcohol": ('yes', 'occasional', 'no'), "gender": ('female', 'other', 'male')}
     __columns_categor = ["diet_type", "stress_level", "sleep_quality", "physical_activity_level", "smoking_alcohol", "gender"]
-    __translate_dict = {'at-risk': 0, 'unhealthy': 1, 'fit': 2} # правило перевода таргетов в числа
+    __translate_dict = {'at-risk': 0, 'unhealthy': 1, 'fit': 2} # target-to-number mapping rule
     __columns_to_scal = ["sleep_duration", "heart_rate", "bmi", "calorie_expenditure", "step_count", "exercise_duration", "water_intake"] 
     
     def __init__(self, df:pd.DataFrame, data_type="train") -> None:
@@ -28,7 +28,7 @@ class DataProcessing:
         return cls.__translate_dict
 
     def __check_valid_of_data(self):
-        '''проверяет, что бы заполненные данные лежали в нормальных интервалах'''
+        '''checks that the filled values lie within valid ranges'''
         for col_name in self.df.columns:
             if col_name not in DataProcessing.__borders:
                 continue
@@ -39,18 +39,18 @@ class DataProcessing:
                     elif type(DataProcessing.__borders[col_name]) is list:
                         mask = ~(((self.df[col_name] >= DataProcessing.__borders[col_name][0]) & (self.df[col_name] <= DataProcessing.__borders[col_name][1])) | self.df[col_name].isna())
                     else:
-                        raise AttributeError("Нестандартный тип данных из словаря borders")
+                        raise AttributeError("Non-standard data type in the borders dict")
                 except AttributeError as ae:
-                    print(f"Словарь borders повреждён: {ae}")
-                print(f"Столбец {col_name}: {mask.sum()}")
+                    print(f"borders dict is corrupted: {ae}")
+                print(f"Column {col_name}: {mask.sum()}")
 
     def __corrupted_data(self):
-        '''удаляет сэмплы с 3-мя и более пропусками'''
+        '''drops samples with 3 or more missing values'''
         self.df = self.df[self.df.isnull().sum(axis=1) < 3]
 
     def __onehot_and_median(self):
-        '''OneHot + mediana'''
-        # Заменяем NaN на медианные значения
+        '''OneHot + median'''
+        # Replace NaN with median values
         if self.data_type == "train": 
             df_Y = self.df[["id", "health_condition"]].copy()
             self.df.drop(columns=["id", "health_condition"], inplace=True)
